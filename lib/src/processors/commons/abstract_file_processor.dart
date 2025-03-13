@@ -28,13 +28,20 @@ import 'dart:io';
 import 'package:flutter_flavorizr/src/parser/models/flavorizr.dart';
 import 'package:flutter_flavorizr/src/processors/commons/abstract_processor.dart';
 
+import '../../utils/constants.dart';
+
 abstract class AbstractFileProcessor extends AbstractProcessor<void> {
   final String path;
-  final File file;
+  late final File file;
 
   AbstractFileProcessor(
     this.path, {
     required Flavorizr config,
-  })  : file = File(path),
-        super(config);
+  }) : super(config) {
+    File file = File(path);
+    if (path == K.androidBuildGradlePath && !file.existsSync()) {
+      file = File('${K.androidAppPath}.kts');
+    }
+    this.file = file;
+  }
 }
